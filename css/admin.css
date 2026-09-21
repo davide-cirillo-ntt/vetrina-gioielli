@@ -1,0 +1,738 @@
+/* =============================================================
+   Dashboard — layout e componenti
+   Ogni valore viene dalle variabili di css/tokens.css.
+   Nessun colore, font o spaziatura inventati qui.
+
+   Si usa con il telefono in mano, in negozio. Da qui tre regole:
+   - una sola colonna, niente griglie da leggere;
+   - tutto ciò che si tocca è almeno 44px;
+   - i campi non scendono mai sotto 16px, altrimenti iOS ingrandisce
+     la pagina da solo al primo tocco e l'utente si perde.
+   ============================================================= */
+
+/* Diverse classi qui sotto impostano `display`, che avrebbe la meglio
+   sulla regola [hidden] dello user-agent: senza questo, nascondere un
+   elemento con l'attributo `hidden` non avrebbe alcun effetto.
+   Stessa scelta fatta in css/site.css. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  /* La barra fissa in fondo appartiene alla sola vista "Aggiungi":
+     lo spazio per non farsi coprire lo riserva quella vista, qui sotto. */
+  padding-bottom: var(--safe-bottom);
+}
+
+.contenitore {
+  width: min(100% - var(--s-4) * 2, 34rem);
+  margin-inline: auto;
+}
+
+.occhiello {
+  margin: 0;
+  color: var(--c-ink-faint);
+  font-size: var(--t-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.tratto {
+  display: block;
+  width: var(--s-7);
+  height: 1px;
+  margin-block: var(--s-4);
+  background: var(--c-accent);
+}
+
+/* --- Striscia di stato (connessione assente) ------------------ */
+
+.striscia {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  margin: 0;
+  padding: var(--s-2) var(--s-4);
+  background: var(--c-danger);
+  color: var(--c-surface);
+  font-size: var(--t-sm);
+  text-align: center;
+}
+
+/* --- Accesso -------------------------------------------------- */
+
+.accesso__inner {
+  padding-block: calc(var(--safe-top) + var(--s-7)) var(--s-7);
+}
+
+.accesso__titolo {
+  margin-top: var(--s-2);
+  font-size: var(--t-2xl);
+  font-weight: 300;
+}
+
+.accesso__testo {
+  margin: 0 0 var(--s-5);
+  color: var(--c-ink-soft);
+  font-weight: 300;
+}
+
+.pieghevole {
+  margin-bottom: var(--s-5);
+  padding: var(--s-4);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+.pieghevole__titolo {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--c-accent);
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+
+.passi {
+  margin: var(--s-3) 0 0;
+  padding-left: var(--s-5);
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+}
+
+.passi li {
+  margin-bottom: var(--s-3);
+}
+
+.passi code {
+  padding: 0 var(--s-1);
+  background: var(--c-surface-2);
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  /* Il nome del repository va a capo sui trattini e sulla barra, non
+     spezzato a metà parola: deve restare riconoscibile. */
+  overflow-wrap: anywhere;
+}
+
+/* --- Intestazione --------------------------------------------- */
+
+.intestazione {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.intestazione__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: calc(var(--safe-top) + var(--s-4)) var(--s-4);
+}
+
+.intestazione__testi {
+  min-width: 0;
+}
+
+.intestazione__nome {
+  margin-top: var(--s-1);
+  font-size: var(--t-xl);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Schede --------------------------------------------------- */
+
+.schede {
+  display: flex;
+  gap: var(--s-2);
+  padding-block: var(--s-4);
+}
+
+.scheda {
+  flex: 1;
+  min-height: 2.75rem;
+  padding: var(--s-2) var(--s-3);
+  background: none;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.scheda[aria-current="true"] {
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+  color: var(--c-bg);
+}
+
+/* --- Passi ---------------------------------------------------- */
+
+.vista {
+  padding-bottom: var(--s-6);
+}
+
+/* La barra fissa è alta circa 7,25rem (due bersagli da 2,75rem più le
+   spaziature): senza questo margine coprirebbe l'ultimo avviso del modulo. */
+#vista-aggiungi {
+  padding-bottom: calc(8.5rem + var(--safe-bottom));
+}
+
+.passo {
+  margin-bottom: var(--s-5);
+  padding: var(--s-5) var(--s-4);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+}
+
+.passo__titolo {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+  font-size: var(--t-lg);
+}
+
+.passo__numero {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--c-surface-2);
+  border-radius: var(--r-full);
+  color: var(--c-accent);
+  font-family: var(--f-body);
+  font-size: var(--t-sm);
+}
+
+.passo__testo {
+  margin: 0 0 var(--s-4);
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+  font-weight: 300;
+}
+
+.passo__testo:last-child {
+  margin-bottom: 0;
+}
+
+.riquadro {
+  margin-top: var(--s-4);
+  padding: var(--s-4);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+/* --- Bottoni -------------------------------------------------- */
+
+.bottone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  /* 44px è il minimo perché un dito lo colpisca senza sbagliare. */
+  min-height: 2.75rem;
+  padding: var(--s-3) var(--s-5);
+  border: 1px solid transparent;
+  border-radius: var(--r-full);
+  font-size: var(--t-sm);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottone--pieno {
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+  color: var(--c-bg);
+}
+
+.bottone--oro {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: var(--c-surface);
+}
+
+.bottone--contorno {
+  background: none;
+  border-color: var(--c-line);
+  color: var(--c-ink);
+}
+
+.bottone--rischio {
+  background: none;
+  border-color: var(--c-danger);
+  color: var(--c-danger);
+}
+
+.bottone:hover {
+  opacity: 0.88;
+}
+
+.bottone:active {
+  transform: translateY(1px);
+}
+
+.bottone[disabled],
+.bottone[aria-disabled="true"] {
+  background: var(--c-surface-2);
+  border-color: var(--c-line);
+  color: var(--c-ink-faint);
+  cursor: not-allowed;
+  transform: none;
+  opacity: 1;
+}
+
+.bottone--largo {
+  width: 100%;
+}
+
+.bottone--piccolo {
+  min-height: 2.75rem;
+  padding: var(--s-2) var(--s-4);
+  font-size: var(--t-xs);
+}
+
+/* L'azione più importante della pagina: si vede e si prende al volo. */
+.bottone--foto {
+  width: 100%;
+  min-height: 3.5rem;
+  margin-bottom: var(--s-3);
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+}
+
+.bottone__icona {
+  flex: none;
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+/* Bottone che si comporta da collegamento: azioni secondarie. */
+.bottone--legame {
+  min-height: 2.75rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+  text-decoration: underline;
+  text-decoration-color: var(--c-accent);
+  text-underline-offset: 0.3em;
+  cursor: pointer;
+}
+
+.coppia {
+  display: flex;
+  gap: var(--s-3);
+}
+
+.coppia .bottone {
+  flex: 1;
+}
+
+/* --- Campi ---------------------------------------------------- */
+
+.modulo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.campo__riga {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.campo__nome {
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.campo__nota {
+  margin: 0;
+  color: var(--c-ink-faint);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.campo__nota:empty {
+  display: none;
+}
+
+.controllo {
+  width: 100%;
+  min-height: 3rem;
+  padding: var(--s-3);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  /* Mai sotto 16px: iOS ingrandirebbe la pagina al primo tocco. */
+  font-size: var(--t-base);
+  line-height: 1.5;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.controllo:focus {
+  background: var(--c-surface);
+  border-color: var(--c-accent);
+}
+
+.controllo--errato {
+  border-color: var(--c-danger);
+}
+
+.controllo--lungo {
+  min-height: 8rem;
+  font-family: var(--f-body);
+  resize: vertical;
+}
+
+.controllo--scelta {
+  /* La freccia va ridisegnata: appearance:none toglie quella di sistema. */
+  padding-right: var(--s-7);
+  background-image: linear-gradient(45deg, transparent 50%, var(--c-ink-soft) 50%),
+    linear-gradient(135deg, var(--c-ink-soft) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.prezzo {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.prezzo__valuta {
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+  color: var(--c-ink-soft);
+}
+
+.interruttore {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 2.75rem;
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+
+.interruttore input {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  accent-color: var(--c-accent);
+}
+
+/* --- Avvisi --------------------------------------------------- */
+
+.avviso {
+  margin: var(--s-4) 0 0;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+
+.avviso--errore {
+  background: rgba(164, 69, 58, 0.07);
+  border-color: rgba(164, 69, 58, 0.25);
+  color: var(--c-danger);
+}
+
+.avviso--nota {
+  background: var(--c-surface-2);
+  color: var(--c-ink-soft);
+}
+
+.stato {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-3);
+  font-size: var(--t-sm);
+}
+
+.stato::before {
+  content: "";
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: var(--r-full);
+  background: var(--c-ink-faint);
+}
+
+.stato--attivo::before {
+  background: var(--c-success);
+}
+
+.stato--spento::before {
+  background: var(--c-accent-soft);
+}
+
+/* --- Lavorazione in corso ------------------------------------- */
+
+.lavorazione {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin: var(--s-4) 0 0;
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+}
+
+.rotella {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--c-line);
+  border-top-color: var(--c-accent);
+  border-radius: var(--r-full);
+  animation: giro 0.7s linear infinite;
+}
+
+@keyframes giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Provino della foto --------------------------------------- */
+
+.provino {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+.provino__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* La foto originale sta sopra quella migliorata: mostrarla e
+   nasconderla è istantaneo, senza ricaricare nulla. */
+.provino__img--sopra {
+  position: absolute;
+  inset: 0;
+}
+
+.etichetta {
+  position: absolute;
+  bottom: var(--s-3);
+  left: var(--s-3);
+  padding: var(--s-1) var(--s-3);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-ink);
+  font-size: var(--t-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.provino__azioni {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.provino__azioni .bottone {
+  flex: 1;
+}
+
+.risparmio {
+  margin: var(--s-3) 0 0;
+  color: var(--c-success);
+  font-size: var(--t-sm);
+}
+
+/* --- Avanzamento ---------------------------------------------- */
+
+.barra {
+  height: 0.5rem;
+  overflow: hidden;
+  background: var(--c-surface-2);
+  border-radius: var(--r-full);
+}
+
+.barra__pieno {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--c-accent);
+  transition: width var(--dur) var(--ease);
+}
+
+#avanzamento-testo {
+  margin-top: var(--s-3);
+  margin-bottom: 0;
+}
+
+.riuscito__titolo {
+  margin-bottom: var(--s-3);
+  color: var(--c-success);
+  font-size: var(--t-xl);
+}
+
+.riuscito__azioni {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+
+/* --- Barra fissa in fondo ------------------------------------- */
+
+.azione {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-line);
+  box-shadow: var(--shadow-md);
+}
+
+.azione__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-1);
+  padding-block: var(--s-3) calc(var(--s-3) + var(--safe-bottom));
+}
+
+/* --- Elenco del catalogo -------------------------------------- */
+
+.elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin: var(--s-4) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.voce {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+.voce__foto {
+  flex: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: cover;
+  background: var(--c-surface-2);
+  border-radius: var(--r-sm);
+}
+
+.voce__testi {
+  flex: 1;
+  min-width: 0;
+}
+
+.voce__nome {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--t-base);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.voce__dettagli {
+  margin: 0;
+  color: var(--c-ink-faint);
+  font-size: var(--t-xs);
+}
+
+.voce__elimina {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-danger);
+  cursor: pointer;
+}
+
+.voce__elimina svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* --- Finestra di conferma ------------------------------------- */
+
+.finestra {
+  width: min(100% - var(--s-4) * 2, 26rem);
+  padding: var(--s-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--c-ink);
+}
+
+.finestra::backdrop {
+  background: rgba(28, 26, 23, 0.45);
+}
+
+.finestra__titolo {
+  margin-bottom: var(--s-3);
+  font-size: var(--t-lg);
+}
+
+.finestra__azioni {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+/* --- Schermi più larghi --------------------------------------- */
+
+@media (min-width: 30rem) {
+  .riuscito__azioni,
+  .finestra__azioni {
+    flex-direction: row-reverse;
+  }
+
+  .riuscito__azioni .bottone,
+  .finestra__azioni .bottone {
+    flex: 1;
+  }
+}
