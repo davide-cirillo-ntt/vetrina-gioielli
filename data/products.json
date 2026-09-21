@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-21T13:00:00.000Z",
+  "products": [
+    {
+      "id": "anello-aurora-0001",
+      "name": "Anello Aurora",
+      "category": "anelli",
+      "price": 189,
+      "description": "Anello in argento 925 con castone rotondo e pietra di luna. La montatura sottile lascia respirare la pietra, che cambia riflesso con la luce. Un pezzo discreto, pensato per essere indossato tutti i giorni.",
+      "materials": ["Argento 925", "Pietra di luna"],
+      "images": ["images/products/placeholder.svg"],
+      "available": true,
+      "featured": true,
+      "tags": ["minimal", "pietra naturale"],
+      "createdAt": "2026-09-21T13:00:00.000Z"
+    },
+    {
+      "id": "collana-filo-0002",
+      "name": "Collana Filo",
+      "category": "collane",
+      "price": 145,
+      "description": "Catena veneziana in oro giallo 18kt con pendente a goccia. Lunghezza 42 cm con chiusura regolabile. Leggera al punto da dimenticarsela addosso.",
+      "materials": ["Oro giallo 18kt"],
+      "images": ["images/products/placeholder.svg"],
+      "available": true,
+      "featured": false,
+      "tags": ["oro", "quotidiano"],
+      "createdAt": "2026-09-21T13:00:00.000Z"
+    }
+  ]
+}
