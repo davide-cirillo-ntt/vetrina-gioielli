@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banco di prova — miglioramento delle foto</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<style>
+  /* Pagina di servizio: non fa parte della vetrina, ma usa lo stesso
+     design system così le valutazioni si fanno sui colori veri. */
+  body { padding: 0 0 calc(var(--s-7) + var(--safe-bottom)); }
+
+  .involucro { max-width: 1100px; margin: 0 auto; padding: 0 var(--s-4); }
+
+  header.testata {
+    padding: calc(var(--s-6) + var(--safe-top)) 0 var(--s-5);
+    border-bottom: 1px solid var(--c-line);
+    margin-bottom: var(--s-6);
+  }
+  header.testata h1 { font-size: var(--t-2xl); }
+  header.testata p { color: var(--c-ink-soft); max-width: 60ch; margin: var(--s-3) 0 0; }
+  .avviso {
+    margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+    background: var(--c-surface-2); border-left: 3px solid var(--c-accent);
+    border-radius: var(--r-sm); font-size: var(--t-sm); color: var(--c-ink-soft);
+  }
+
+  .pannello {
+    background: var(--c-surface); border: 1px solid var(--c-line);
+    border-radius: var(--r-lg); padding: var(--s-5);
+    box-shadow: var(--shadow-sm); margin-bottom: var(--s-6);
+  }
+  .pannello h2 { font-size: var(--t-lg); margin-bottom: var(--s-4); }
+
+  fieldset { border: 1px solid var(--c-line); border-radius: var(--r-md);
+             padding: var(--s-4); margin: 0 0 var(--s-4); }
+  legend { padding: 0 var(--s-2); font-size: var(--t-sm); font-weight: 500;
+           color: var(--c-ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .griglia-passaggi {
+    display: grid; gap: var(--s-2);
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  }
+  .passaggio {
+    display: flex; gap: var(--s-3); align-items: flex-start;
+    padding: var(--s-3); border-radius: var(--r-sm); cursor: pointer;
+    transition: background var(--dur) var(--ease);
+  }
+  .passaggio:hover { background: var(--c-surface-2); }
+  .passaggio input { margin: 0.3rem 0 0; flex: none; width: 1.05rem; height: 1.05rem;
+                     accent-color: var(--c-accent); }
+  .passaggio .titolo { display: block; font-size: var(--t-sm); font-weight: 500; }
+  .passaggio .nota { display: block; font-size: var(--t-xs); color: var(--c-ink-faint);
+                     line-height: 1.45; }
+
+  .griglia-numeri { display: grid; gap: var(--s-4);
+                    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .campo { display: flex; flex-direction: column; gap: var(--s-2); }
+  .campo label { font-size: var(--t-sm); color: var(--c-ink-soft); }
+  .campo input[type="number"], .campo select {
+    padding: var(--s-2) var(--s-3); border: 1px solid var(--c-line);
+    border-radius: var(--r-sm); background: var(--c-surface);
+  }
+  .campo input[type="range"] { accent-color: var(--c-accent); }
+
+  .azioni { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
+  .bottone {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    padding: var(--s-3) var(--s-5); border-radius: var(--r-full);
+    border: 1px solid var(--c-accent); background: var(--c-accent); color: #fff;
+    font-size: var(--t-sm); font-weight: 500; cursor: pointer;
+    transition: opacity var(--dur) var(--ease);
+  }
+  .bottone:hover { opacity: 0.88; }
+  .bottone.secondario { background: transparent; color: var(--c-accent); }
+  .bottone:disabled { opacity: 0.45; cursor: progress; }
+  input[type="file"] { display: none; }
+
+  .scheda {
+    background: var(--c-surface); border: 1px solid var(--c-line);
+    border-radius: var(--r-lg); overflow: hidden;
+    box-shadow: var(--shadow-sm); margin-bottom: var(--s-5);
+  }
+  .scheda > header {
+    display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline;
+    justify-content: space-between;
+    padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--c-line);
+    background: var(--c-surface-2);
+  }
+  .scheda h3 { font-size: var(--t-lg); overflow-wrap: anywhere; }
+  .scheda .etichetta { font-size: var(--t-xs); color: var(--c-ink-faint); }
+
+  .schede-viste { display: flex; gap: var(--s-2); padding: var(--s-4) var(--s-5) 0; }
+  .vista-bottone {
+    padding: var(--s-2) var(--s-4); border-radius: var(--r-full);
+    border: 1px solid var(--c-line); background: transparent;
+    font-size: var(--t-sm); cursor: pointer;
+  }
+  .vista-bottone[aria-selected="true"] {
+    background: var(--c-ink); color: var(--c-bg); border-color: var(--c-ink);
+  }
+
+  .corpo { padding: var(--s-4) var(--s-5) var(--s-5); }
+
+  .affiancate { display: grid; gap: var(--s-4); grid-template-columns: 1fr 1fr; }
+  .affiancate figure { margin: 0; }
+  .affiancate figcaption {
+    margin-top: var(--s-2); font-size: var(--t-xs); color: var(--c-ink-faint);
+    text-align: center;
+  }
+  .affiancate img, .confronto img {
+    width: 100%; border-radius: var(--r-md); background: var(--c-surface-2);
+  }
+
+  .confronto { position: relative; border-radius: var(--r-md); overflow: hidden;
+               touch-action: none; }
+  .confronto .sopra { position: absolute; inset: 0; }
+  .confronto .sopra img { height: 100%; object-fit: cover; border-radius: 0; }
+  .confronto .maniglia {
+    position: absolute; top: 0; bottom: 0; width: 2px; background: var(--c-surface);
+    box-shadow: 0 0 0 1px rgba(28,26,23,0.25); pointer-events: none;
+  }
+  .confronto .maniglia::after {
+    content: ""; position: absolute; top: 50%; left: 50%;
+    width: 2.4rem; height: 2.4rem; transform: translate(-50%, -50%);
+    border-radius: var(--r-full); background: var(--c-surface);
+    box-shadow: var(--shadow-md);
+  }
+  .confronto .pallino {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: var(--t-xs); color: var(--c-ink-soft); pointer-events: none; z-index: 2;
+  }
+  .cursore-confronto { width: 100%; margin-top: var(--s-3); accent-color: var(--c-accent); }
+
+  .misure { margin-top: var(--s-5); display: grid; gap: var(--s-4);
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .misure h4 { font-family: var(--f-body); font-size: var(--t-xs); font-weight: 600;
+               text-transform: uppercase; letter-spacing: 0.06em;
+               color: var(--c-ink-faint); margin: 0 0 var(--s-2); }
+  .misure dl { margin: 0; font-size: var(--t-sm); }
+  .misure div.riga { display: flex; justify-content: space-between; gap: var(--s-3);
+                     padding: var(--s-1) 0; border-bottom: 1px dotted var(--c-line); }
+  .misure dt { color: var(--c-ink-soft); }
+  .misure dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+  .misure dd.spicca { color: var(--c-accent); font-weight: 500; }
+
+  .errore {
+    padding: var(--s-4) var(--s-5); color: var(--c-danger);
+    font-size: var(--t-sm);
+  }
+  .vuoto { color: var(--c-ink-faint); font-size: var(--t-sm); text-align: center;
+           padding: var(--s-7) var(--s-4); }
+
+  @media (max-width: 640px) {
+    .affiancate { grid-template-columns: 1fr; }
+    header.testata h1 { font-size: var(--t-xl); }
+  }
+</style>
+</head>
+<body>
+
+<header class="testata">
+  <div class="involucro">
+    <h1>Banco di prova delle foto</h1>
+    <p>
+      Serve a vedere cosa fa davvero <code>enhanceImage()</code> su una foto
+      scattata col telefono. Scegli una o più immagini, oppure genera qui sotto
+      delle foto difficili costruite apposta, e confronta prima e dopo.
+    </p>
+    <p class="avviso">
+      Pagina di sviluppo: non è collegata alla vetrina e non pubblica nulla.
+      Tutta l'elaborazione avviene nel browser, nessuna immagine viene inviata
+      da nessuna parte.
+    </p>
+  </div>
+</header>
+
+<main class="involucro">
+
+  <section class="pannello">
+    <h2>Immagini</h2>
+    <div class="azioni">
+      <label class="bottone" for="scelta-file">Scegli dalla galleria</label>
+      <input type="file" id="scelta-file" accept="image/*" multiple>
+
+      <label class="bottone secondario" for="scatta-foto">Scatta una foto</label>
+      <input type="file" id="scatta-foto" accept="image/*" capture="environment">
+
+      <button type="button" class="bottone secondario" id="genera-prove">
+        Genera foto difficili
+      </button>
+    </div>
+    <p class="etichetta" style="margin: var(--s-3) 0 0; color: var(--c-ink-faint); font-size: var(--t-xs);">
+      Le foto generate sono sintetiche e restano nel browser: servono a
+      controllare i casi limite (dominante gialla, sotto e sovraesposizione,
+      riflesso bruciato, formato verticale) senza doverli fotografare davvero.
+    </p>
+  </section>
+
+  <section class="pannello">
+    <h2>Passaggi della catena</h2>
+    <fieldset>
+      <legend>Attiva o disattiva</legend>
+      <div class="griglia-passaggi" id="passaggi"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Parametri</legend>
+      <div class="griglia-numeri">
+        <div class="campo">
+          <label for="max-size">Lato massimo (px)</label>
+          <input type="number" id="max-size" value="1600" min="128" max="4096" step="32">
+        </div>
+        <div class="campo">
+          <label for="qualita">Qualità: <span id="qualita-valore">0,85</span></label>
+          <input type="range" id="qualita" value="0.85" min="0.4" max="1" step="0.01">
+        </div>
+        <div class="campo">
+          <label for="quadrato">Ritaglio</label>
+          <select id="quadrato">
+            <option value="si" selected>Quadrato centrato</option>
+            <option value="no">Proporzioni originali</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <section id="risultati" aria-live="polite">
+    <p class="vuoto">Nessuna foto elaborata. Scegline una qui sopra.</p>
+  </section>
+</main>
+
+<script type="module">
+import { enhanceImage } from "../js/lib/image-enhance.js";
+
+// =============================================================
+//  Comandi
+// =============================================================
+
+const PASSAGGI = [
+  { id: "orientation", titolo: "Orientamento EXIF",
+    nota: "Raddrizza le foto che il telefono salva ruotate." },
+  { id: "crop", titolo: "Ritaglio quadrato",
+    nota: "Formato uniforme per il catalogo." },
+  { id: "whiteBalance", titolo: "Bilanciamento del bianco",
+    nota: "Toglie la dominante della luce: l'argento non deve sembrare ottone." },
+  { id: "levels", titolo: "Auto-livelli",
+    nota: "Allarga l'istogramma sui percentili, con le alte luci raccordate." },
+  { id: "contrast", titolo: "Contrasto",
+    nota: "Curva a S dolce, appena percettibile." },
+  { id: "saturation", titolo: "Saturazione",
+    nota: "Leggero ravvivamento, frenato dove il colore è già vivo." },
+  { id: "sharpen", titolo: "Maschera di contrasto",
+    nota: "Nitidezza sui bordi, con soglia per non tirare su il rumore." },
+];
+
+const contenitorePassaggi = document.getElementById("passaggi");
+for (const passaggio of PASSAGGI) {
+  const riga = document.createElement("label");
+  riga.className = "passaggio";
+  riga.innerHTML =
+    '<input type="checkbox" checked data-passaggio="' + passaggio.id + '">' +
+    "<span><span class=\"titolo\"></span><span class=\"nota\"></span></span>";
+  riga.querySelector(".titolo").textContent = passaggio.titolo;
+  riga.querySelector(".nota").textContent = passaggio.nota;
+  contenitorePassaggi.append(riga);
+}
+
+const campoQualita = document.getElementById("qualita");
+const etichettaQualita = document.getElementById("qualita-valore");
+campoQualita.addEventListener("input", () => {
+  etichettaQualita.textContent = Number(campoQualita.value).toFixed(2).replace(".", ",");
+});
+
+function opzioniCorrenti() {
+  const steps = {};
+  for (const casella of contenitorePassaggi.querySelectorAll("input[data-passaggio]")) {
+    steps[casella.dataset.passaggio] = casella.checked;
+  }
+  return {
+    maxSize: Number(document.getElementById("max-size").value) || 1600,
+    quality: Number(campoQualita.value) || 0.85,
+    square: document.getElementById("quadrato").value === "si",
+    steps,
+  };
+}
+
+// =============================================================
+//  Misure: servono a controllare i numeri, non solo l'occhio
+// =============================================================
+
+function telaDa(sorgente) {
+  const c = document.createElement("canvas");
+  c.width = sorgente.width;
+  c.height = sorgente.height;
+  c.getContext("2d").drawImage(sorgente, 0, 0);
+  return c;
+}
+
+async function misura(sorgente) {
+  const tela = sorgente instanceof HTMLCanvasElement ? sorgente : telaDa(sorgente);
+  const ctx = tela.getContext("2d", { willReadFrequently: true });
+  const d = ctx.getImageData(0, 0, tela.width, tela.height).data;
+  const n = d.length / 4;
+  const isto = new Uint32Array(256);
+  let sr = 0, sg = 0, sb = 0, sy = 0, saturi = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    sr += r; sg += g; sb += b;
+    const y = 0.299 * r + 0.587 * g + 0.114 * b;
+    sy += y; isto[y | 0] += 1;
+    if (r >= 255 || g >= 255 || b >= 255) saturi += 1;
+  }
+  const percentile = (f) => {
+    let acc = 0;
+    for (let v = 0; v < 256; v += 1) { acc += isto[v]; if (acc >= n * f) return v; }
+    return 255;
+  };
+  const media = sy / n;
+  let varianza = 0;
+  for (let v = 0; v < 256; v += 1) varianza += isto[v] * (v - media) ** 2;
+  return {
+    mediaR: sr / n, mediaG: sg / n, mediaB: sb / n,
+    luma: media,
+    deviazione: Math.sqrt(varianza / n),
+    p05: percentile(0.005), p50: percentile(0.5), p995: percentile(0.995),
+    saturi: (saturi / n) * 100,
+  };
+}
+
+// =============================================================
+//  Foto di prova generate al volo (restano solo nel browser)
+// =============================================================
+
+function scena(w, h, tinta) {
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const ctx = c.getContext("2d");
+  const fondo = ctx.createLinearGradient(0, 0, 0, h);
+  fondo.addColorStop(0, "#d8d6d2");
+  fondo.addColorStop(1, "#b4b1ad");
+  ctx.fillStyle = fondo;
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.26;
+  const metallo = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+  if (tinta === "oro") {
+    metallo.addColorStop(0, "#7a5f16"); metallo.addColorStop(0.4, "#e8c65a");
+    metallo.addColorStop(0.68, "#b8923a"); metallo.addColorStop(1, "#f2dc95");
+  } else {
+    metallo.addColorStop(0, "#1e1e22"); metallo.addColorStop(0.4, "#f0f0f4");
+    metallo.addColorStop(0.68, "#767680"); metallo.addColorStop(1, "#fafafc");
+  }
+  ctx.strokeStyle = metallo;
+  ctx.lineWidth = Math.max(6, r * 0.3);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+
+  // incisioni: dettaglio fine per giudicare la maschera di contrasto
+  ctx.strokeStyle = "rgba(20,20,24,0.65)";
+  ctx.lineWidth = Math.max(1, w / 700);
+  for (let i = 0; i < 48; i += 1) {
+    const a = (i / 48) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * r * 0.87, cy + Math.sin(a) * r * 0.87);
+    ctx.lineTo(cx + Math.cos(a) * r * 1.13, cy + Math.sin(a) * r * 1.13);
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#0c0c0c";
+  ctx.fillRect(w * 0.06, h * 0.85, w * 0.13, h * 0.09);
+  ctx.fillStyle = "#fbfbfb";
+  ctx.fillRect(w * 0.81, h * 0.06, w * 0.13, h * 0.09);
+  return c;
+}
+
+function riflessoBruciato(sorgente) {
+  const c = telaDa(sorgente);
+  const ctx = c.getContext("2d");
+  const r = Math.min(c.width, c.height) * 0.03;
+  const x = c.width * 0.63, y = c.height * 0.37;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r * 2.2);
+  g.addColorStop(0, "rgba(255,255,255,1)");
+  g.addColorStop(0.4, "rgba(255,255,255,1)");
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r * 2.2, 0, Math.PI * 2); ctx.fill();
+  return c;
+}
+
+function perPixel(sorgente, fn) {
+  const c = telaDa(sorgente);
+  const ctx = c.getContext("2d", { willReadFrequently: true });
+  const img = ctx.getImageData(0, 0, c.width, c.height);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const out = fn(d[i], d[i + 1], d[i + 2]);
+    d[i] = out[0]; d[i + 1] = out[1]; d[i + 2] = out[2];
+  }
+  ctx.putImageData(img, 0, 0);
+  return c;
+}
+
+const versoJpeg = (tela, q = 0.92) =>
+  new Promise((risolvi) => tela.toBlob(risolvi, "image/jpeg", q));
+
+async function fotoDiProva() {
+  const base = scena(1400, 1400, "argento");
+  const oro = scena(1400, 1400, "oro");
+  const verticale = scena(1000, 1500, "argento");
+  const casi = [
+    ["Luce calda (dominante gialla)",
+      perPixel(oro, (r, g, b) => [r * 1.18, g * 1.02, b * 0.68])],
+    ["Sottoesposta",
+      perPixel(base, (r, g, b) => [r * 0.34, g * 0.34, b * 0.34])],
+    ["Sovraesposta",
+      perPixel(base, (r, g, b) => [r * 1.5, g * 1.5, b * 1.5])],
+    ["Riflesso speculare bruciato",
+      riflessoBruciato(perPixel(base, (r, g, b) => [58 + r * 0.42, 58 + g * 0.42, 58 + b * 0.42]))],
+    ["Verticale, già esposta bene", verticale],
+    ["Oro sotto luce neutra", oro],
+  ];
+  const file = [];
+  for (const [nome, tela] of casi) {
+    const blob = await versoJpeg(tela);
+    file.push(new File([blob], nome + ".jpg", { type: "image/jpeg" }));
+  }
+  return file;
+}
+
+// =============================================================
+//  Presentazione dei risultati
+// =============================================================
+
+const contenitoreRisultati = document.getElementById("risultati");
+
+const numero = (v, decimali = 0) =>
+  v.toLocaleString("it-IT", { minimumFractionDigits: decimali, maximumFractionDigits: decimali });
+
+function peso(byte) {
+  if (byte < 1024) return byte + " B";
+  if (byte < 1024 * 1024) return numero(byte / 1024, 1) + " kB";
+  return numero(byte / (1024 * 1024), 2) + " MB";
+}
+
+function riga(dl, etichetta, valore, spicca) {
+  const contenitore = document.createElement("div");
+  contenitore.className = "riga";
+  const dt = document.createElement("dt");
+  dt.textContent = etichetta;
+  const dd = document.createElement("dd");
+  dd.textContent = valore;
+  if (spicca) dd.className = "spicca";
+  contenitore.append(dt, dd);
+  dl.append(contenitore);
+}
+
+function blocco(titolo) {
+  const sezione = document.createElement("section");
+  const h4 = document.createElement("h4");
+  h4.textContent = titolo;
+  const dl = document.createElement("dl");
+  sezione.append(h4, dl);
+  return { sezione, dl };
+}
+
+function confrontoScorrevole(urlPrima, urlDopo) {
+  const involucro = document.createElement("div");
+  const cornice = document.createElement("div");
+  cornice.className = "confronto";
+
+  const dopo = document.createElement("img");
+  dopo.src = urlDopo;
+  dopo.alt = "Immagine elaborata";
+
+  const sopra = document.createElement("div");
+  sopra.className = "sopra";
+  const prima = document.createElement("img");
+  prima.src = urlPrima;
+  prima.alt = "Immagine originale";
+  sopra.append(prima);
+
+  const maniglia = document.createElement("div");
+  maniglia.className = "maniglia";
+  const pallino = document.createElement("span");
+  pallino.className = "pallino";
+  pallino.textContent = "↔";
+
+  cornice.append(dopo, sopra, maniglia, pallino);
+
+  const cursore = document.createElement("input");
+  cursore.type = "range";
+  cursore.min = "0";
+  cursore.max = "100";
+  cursore.value = "50";
+  cursore.className = "cursore-confronto";
+  cursore.setAttribute("aria-label", "Scorri fra originale ed elaborata");
+
+  const posiziona = (percentuale) => {
+    sopra.style.clipPath = "inset(0 " + (100 - percentuale) + "% 0 0)";
+    maniglia.style.left = percentuale + "%";
+    pallino.style.left = percentuale + "%";
+  };
+  posiziona(50);
+  cursore.addEventListener("input", () => posiziona(Number(cursore.value)));
+
+  // trascinamento diretto sull'immagine, comodo col dito
+  const daEvento = (evento) => {
+    const rettangolo = cornice.getBoundingClientRect();
+    const x = (evento.touches ? evento.touches[0].clientX : evento.clientX) - rettangolo.left;
+    const percentuale = Math.min(100, Math.max(0, (x / rettangolo.width) * 100));
+    cursore.value = String(percentuale);
+    posiziona(percentuale);
+  };
+  let trascina = false;
+  cornice.addEventListener("pointerdown", (e) => { trascina = true; cornice.setPointerCapture(e.pointerId); daEvento(e); });
+  cornice.addEventListener("pointermove", (e) => { if (trascina) daEvento(e); });
+  cornice.addEventListener("pointerup", () => { trascina = false; });
+  cornice.addEventListener("pointercancel", () => { trascina = false; });
+
+  involucro.append(cornice, cursore);
+  return involucro;
+}
+
+function creaScheda(nome) {
+  const scheda = document.createElement("article");
+  scheda.className = "scheda";
+  scheda.innerHTML =
+    "<header><h3></h3><span class=\"etichetta\">elaborazione…</span></header>" +
+    "<div class=\"corpo\"><p class=\"vuoto\">Elaborazione in corso…</p></div>";
+  scheda.querySelector("h3").textContent = nome;
+  contenitoreRisultati.prepend(scheda);
+  return scheda;
+}
+
+function mostraErrore(scheda, messaggio) {
+  scheda.querySelector(".etichetta").textContent = "non riuscita";
+  const corpo = scheda.querySelector(".corpo");
+  corpo.innerHTML = "";
+  const p = document.createElement("p");
+  p.className = "errore";
+  p.textContent = messaggio;
+  corpo.append(p);
+}
+
+function riempiScheda(scheda, dati) {
+  const { risultato, urlPrima, urlDopo, primaMisura, dopoMisura } = dati;
+  const rapporto = risultato.report;
+
+  scheda.querySelector(".etichetta").textContent =
+    risultato.width + "×" + risultato.height + " · " + rapporto.elapsedMs + " ms";
+
+  const corpo = scheda.querySelector(".corpo");
+  corpo.innerHTML = "";
+
+  // --- selettore della vista ---
+  const viste = document.createElement("div");
+  viste.className = "schede-viste";
+  viste.setAttribute("role", "tablist");
+  const bottoneAffiancate = document.createElement("button");
+  bottoneAffiancate.type = "button";
+  bottoneAffiancate.className = "vista-bottone";
+  bottoneAffiancate.textContent = "Affiancate";
+  bottoneAffiancate.setAttribute("role", "tab");
+  const bottoneSovrapposte = bottoneAffiancate.cloneNode(false);
+  bottoneSovrapposte.textContent = "Sovrapposte";
+  viste.append(bottoneAffiancate, bottoneSovrapposte);
+
+  const affiancate = document.createElement("div");
+  affiancate.className = "affiancate";
+  const figuraPrima = document.createElement("figure");
+  figuraPrima.innerHTML = "<img alt=\"Originale, solo raddrizzata e ritagliata\">" +
+    "<figcaption>Prima — solo geometria</figcaption>";
+  figuraPrima.querySelector("img").src = urlPrima;
+  const figuraDopo = document.createElement("figure");
+  figuraDopo.innerHTML = "<img alt=\"Immagine elaborata\">" +
+    "<figcaption>Dopo — catena completa</figcaption>";
+  figuraDopo.querySelector("img").src = urlDopo;
+  affiancate.append(figuraPrima, figuraDopo);
+
+  const sovrapposte = confrontoScorrevole(urlPrima, urlDopo);
+  sovrapposte.hidden = true;
+
+  const scegli = (sovrapposta) => {
+    affiancate.hidden = sovrapposta;
+    sovrapposte.hidden = !sovrapposta;
+    bottoneAffiancate.setAttribute("aria-selected", String(!sovrapposta));
+    bottoneSovrapposte.setAttribute("aria-selected", String(sovrapposta));
+  };
+  bottoneAffiancate.addEventListener("click", () => scegli(false));
+  bottoneSovrapposte.addEventListener("click", () => scegli(true));
+  scegli(false);
+
+  // --- misure ---
+  const misure = document.createElement("div");
+  misure.className = "misure";
+
+  const lavoro = blocco("Elaborazione");
+  riga(lavoro.dl, "Tempo", rapporto.elapsedMs + " ms", true);
+  riga(lavoro.dl, "Peso prima", peso(risultato.originalBytes));
+  riga(lavoro.dl, "Peso dopo", peso(risultato.bytes), true);
+  const risparmio = 100 - (risultato.bytes / risultato.originalBytes) * 100;
+  riga(lavoro.dl, "Differenza",
+    (risparmio >= 0 ? "−" : "+") + numero(Math.abs(risparmio), 1) + " %");
+  riga(lavoro.dl, "Formato", risultato.mimeType + " (." + risultato.extension + ")");
+  riga(lavoro.dl, "Dimensioni", risultato.width + " × " + risultato.height + " px");
+
+  const catena = blocco("Cosa ha fatto la catena");
+  riga(catena.dl, "Sorgente", rapporto.sourceWidth + " × " + rapporto.sourceHeight + " px");
+  riga(catena.dl, "Ritaglio", rapporto.cropWidth + " × " + rapporto.cropHeight + " px");
+  riga(catena.dl, "Orientamento EXIF",
+    rapporto.autoOrients ? "applicato dal browser" : "tag letto: " + rapporto.orientation);
+  riga(catena.dl, "Decodifica", rapporto.decodePath);
+  riga(catena.dl, "OffscreenCanvas", rapporto.offscreen ? "sì" : "no (tela normale)");
+  if (rapporto.whiteBalance) {
+    riga(catena.dl, "Guadagni R/G/B",
+      numero(rapporto.whiteBalance.gainR, 3) + " / " +
+      numero(rapporto.whiteBalance.gainG, 3) + " / " +
+      numero(rapporto.whiteBalance.gainB, 3), true);
+  } else {
+    riga(catena.dl, "Guadagni R/G/B", "bilanciamento non applicato");
+  }
+  if (rapporto.levels) {
+    riga(catena.dl, "Punto di nero / bianco",
+      rapporto.levels.low + " → " + rapporto.levels.high, true);
+    riga(catena.dl, "Espansione", "× " + numero(rapporto.levels.scale, 2));
+  } else {
+    riga(catena.dl, "Auto-livelli", "non applicati");
+  }
+
+  const colori = blocco("Misure sui pixel (prima → dopo)");
+  const confronta = (etichetta, a, b, decimali = 1, spicca = false) =>
+    riga(colori.dl, etichetta,
+      numero(a, decimali) + " → " + numero(b, decimali), spicca);
+  confronta("Media R", primaMisura.mediaR, dopoMisura.mediaR);
+  confronta("Media G", primaMisura.mediaG, dopoMisura.mediaG);
+  confronta("Media B", primaMisura.mediaB, dopoMisura.mediaB);
+  confronta("Scarto R−B",
+    primaMisura.mediaR - primaMisura.mediaB,
+    dopoMisura.mediaR - dopoMisura.mediaB, 1, true);
+  confronta("Luminosità media", primaMisura.luma, dopoMisura.luma, 1, true);
+  confronta("Contrasto (σ)", primaMisura.deviazione, dopoMisura.deviazione);
+  riga(colori.dl, "Percentili 0,5 / 99,5",
+    primaMisura.p05 + "–" + primaMisura.p995 + " → " + dopoMisura.p05 + "–" + dopoMisura.p995);
+  confronta("Pixel a fondo scala %", primaMisura.saturi, dopoMisura.saturi, 2);
+
+  misure.append(lavoro.sezione, catena.sezione, colori.sezione);
+  corpo.append(viste, affiancate, sovrapposte, misure);
+}
+
+// =============================================================
+//  Elaborazione
+// =============================================================
+
+let inCorso = false;
+
+async function elabora(file) {
+  const scheda = creaScheda(file.name || "immagine");
+  try {
+    const opzioni = opzioniCorrenti();
+
+    // La fase "geometria" arriva prima di qualsiasi lavoro sul colore:
+    // se ne prende una copia al volo, così il confronto prima/dopo non
+    // costa una seconda decodifica dell'immagine.
+    let telaPrima = null;
+    const risultato = await enhanceImage(file, {
+      ...opzioni,
+      onStage: (fase, tela) => {
+        if (fase !== "geometria") return;
+        telaPrima = telaDa(tela);
+      },
+    });
+
+    const primaMisura = await misura(telaPrima);
+    const bitmapDopo = await createImageBitmap(risultato.blob);
+    const telaDopo = telaDa(bitmapDopo);
+    bitmapDopo.close?.();
+    const dopoMisura = await misura(telaDopo);
+
+    const blobPrima = await versoJpeg(telaPrima, 0.92);
+    riempiScheda(scheda, {
+      risultato,
+      urlPrima: URL.createObjectURL(blobPrima),
+      urlDopo: risultato.dataUrl,
+      primaMisura,
+      dopoMisura,
+    });
+  } catch (errore) {
+    mostraErrore(scheda, errore && errore.message ? errore.message : String(errore));
+  }
+}
+
+async function elaboraTutte(elenco) {
+  if (inCorso || !elenco.length) return;
+  inCorso = true;
+  for (const bottone of document.querySelectorAll(".bottone")) bottone.setAttribute("aria-busy", "true");
+  const segnaposto = contenitoreRisultati.querySelector(":scope > .vuoto");
+  if (segnaposto) segnaposto.remove();
+  try {
+    for (const file of elenco) {
+      // una alla volta: su un telefono elaborarle in parallelo esaurisce la memoria
+      await elabora(file);
+    }
+  } finally {
+    inCorso = false;
+    for (const bottone of document.querySelectorAll(".bottone")) bottone.removeAttribute("aria-busy");
+  }
+}
+
+for (const id of ["scelta-file", "scatta-foto"]) {
+  document.getElementById(id).addEventListener("change", (evento) => {
+    elaboraTutte(Array.from(evento.target.files || []));
+    evento.target.value = "";
+  });
+}
+
+const bottoneProve = document.getElementById("genera-prove");
+bottoneProve.addEventListener("click", async () => {
+  bottoneProve.disabled = true;
+  bottoneProve.textContent = "Generazione…";
+  try {
+    await elaboraTutte(await fotoDiProva());
+  } finally {
+    bottoneProve.disabled = false;
+    bottoneProve.textContent = "Genera foto difficili";
+  }
+});
+</script>
+</body>
+</html>
