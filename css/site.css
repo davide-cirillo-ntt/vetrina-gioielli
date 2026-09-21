@@ -1,0 +1,601 @@
+/* =============================================================
+   Vetrina pubblica — layout e componenti
+   Ogni valore viene dalle variabili di css/tokens.css.
+   Nessun colore, font o spaziatura inventati qui.
+   ============================================================= */
+
+/* --- Impalcatura ---------------------------------------------- */
+
+/* Diverse classi qui sotto impostano `display`, che avrebbe la meglio
+   sulla regola [hidden] dello user-agent: senza questo, nascondere un
+   elemento con l'attributo `hidden` non avrebbe alcun effetto. */
+[hidden] {
+  display: none !important;
+}
+
+.contenitore {
+  width: min(100% - var(--s-5) * 2, 1120px);
+  margin-inline: auto;
+}
+
+/* Blocca lo scorrimento della pagina mentre la scheda è aperta. */
+.senza-scorrimento {
+  overflow: hidden;
+}
+
+.salta {
+  position: absolute;
+  z-index: 10;
+  top: calc(var(--safe-top) + var(--s-3));
+  left: var(--s-4);
+  padding: var(--s-2) var(--s-4);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-ink);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--s-6)));
+  transition: transform var(--dur) var(--ease);
+}
+
+.salta:focus-visible {
+  transform: translateY(0);
+}
+
+/* --- Apertura ------------------------------------------------- */
+
+.apertura {
+  padding-block: calc(var(--safe-top) + var(--s-8)) var(--s-7);
+}
+
+.apertura__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-4);
+  text-align: center;
+}
+
+.apertura__nome {
+  max-width: 18ch;
+  font-size: var(--t-3xl);
+  font-weight: 300;
+}
+
+.apertura__tagline {
+  margin: 0;
+  color: var(--c-ink-soft);
+  font-size: var(--t-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.apertura__tratto {
+  display: block;
+  width: var(--s-7);
+  height: 1px;
+  margin-block: var(--s-2);
+  background: var(--c-accent);
+}
+
+.apertura__testo {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--c-ink-soft);
+  font-weight: 300;
+}
+
+/* --- Filtri --------------------------------------------------- */
+
+.filtri {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-2);
+  padding-block: var(--s-5);
+  border-top: 1px solid var(--c-line);
+}
+
+.filtro {
+  min-height: 2.75rem;
+  padding: var(--s-2) var(--s-5);
+  background: none;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+  cursor: pointer;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.filtro:hover {
+  background: var(--c-surface-2);
+  color: var(--c-ink);
+}
+
+.filtro[aria-pressed="true"] {
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+  color: var(--c-bg);
+}
+
+.conteggio {
+  margin: 0;
+  padding-bottom: var(--s-6);
+  color: var(--c-ink-faint);
+  font-size: var(--t-xs);
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.conteggio:empty {
+  display: none;
+}
+
+/* --- Griglia -------------------------------------------------- */
+
+.griglia {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-6) var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 600px) {
+  .griglia {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .griglia {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-7) var(--s-6);
+  }
+}
+
+.gioiello {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gioiello__foto {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+.gioiello__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+
+.gioiello:hover .gioiello__foto img,
+.gioiello:focus-visible .gioiello__foto img {
+  transform: scale(1.03);
+}
+
+.gioiello--venduto .gioiello__foto img {
+  opacity: 0.65;
+}
+
+.gioiello__corpo {
+  display: block;
+  padding-top: var(--s-3);
+}
+
+.gioiello__nome {
+  display: block;
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+  line-height: 1.25;
+}
+
+.gioiello__prezzo {
+  display: block;
+  margin-top: var(--s-1);
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+}
+
+.etichetta {
+  position: absolute;
+  bottom: var(--s-3);
+  left: var(--s-3);
+  padding: var(--s-1) var(--s-3);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-ink);
+  font-family: var(--f-body);
+  font-size: var(--t-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.etichetta--grande {
+  bottom: var(--s-4);
+  left: var(--s-4);
+}
+
+/* --- Scheletri di caricamento --------------------------------- */
+
+.scheletro {
+  display: block;
+  animation: respiro 1.6s var(--ease) infinite alternate;
+}
+
+.scheletro__foto,
+.scheletro__riga {
+  display: block;
+  background: var(--c-surface-2);
+}
+
+.scheletro__foto {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-md);
+}
+
+.scheletro__riga {
+  height: 0.8rem;
+  margin-top: var(--s-3);
+  border-radius: var(--r-sm);
+}
+
+.scheletro__riga--corta {
+  width: 35%;
+  margin-top: var(--s-2);
+}
+
+@keyframes respiro {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* --- Avvisi: catalogo vuoto, errore di rete ------------------- */
+
+.avviso {
+  margin-block: var(--s-6);
+  padding: var(--s-7) var(--s-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  text-align: center;
+}
+
+.avviso__titolo {
+  font-size: var(--t-xl);
+}
+
+.avviso__testo {
+  max-width: 46ch;
+  margin: var(--s-3) auto 0;
+  color: var(--c-ink-soft);
+  font-weight: 300;
+}
+
+.avviso__testo + .bottone {
+  margin-top: var(--s-5);
+}
+
+/* --- Bottoni -------------------------------------------------- */
+
+.bottone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 2.75rem;
+  padding: var(--s-3) var(--s-5);
+  border: 1px solid transparent;
+  border-radius: var(--r-full);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.bottone--pieno {
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+  color: var(--c-bg);
+}
+
+.bottone--pieno:hover {
+  opacity: 0.88;
+}
+
+.bottone--pieno:active {
+  transform: translateY(1px);
+}
+
+.bottone--contorno {
+  background: none;
+  border-color: var(--c-line);
+  color: var(--c-ink);
+}
+
+.bottone--contorno:hover {
+  background: var(--c-surface-2);
+}
+
+.bottone[disabled] {
+  background: var(--c-surface-2);
+  border-color: var(--c-line);
+  color: var(--c-ink-soft);
+  cursor: not-allowed;
+}
+
+.bottone__icona {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* --- Scheda del gioiello (dialog) ----------------------------- */
+
+.scheda {
+  width: min(100% - var(--s-4) * 2, 900px);
+  max-height: 88dvh;
+  padding: 0;
+  overflow: hidden;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  color: var(--c-ink);
+}
+
+.scheda[open] {
+  display: grid;
+  animation: entrata var(--dur) var(--ease) both;
+}
+
+.scheda::backdrop {
+  background: rgba(28, 26, 23, 0.45);
+}
+
+@keyframes entrata {
+  from {
+    opacity: 0;
+    transform: translateY(var(--s-3));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scheda__pannello {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.scheda__pannello:focus {
+  outline: none;
+}
+
+@media (min-width: 760px) {
+  .scheda__pannello {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+}
+
+.scheda__chiudi {
+  position: absolute;
+  z-index: 1;
+  top: var(--s-3);
+  right: var(--s-3);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-full);
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.scheda__chiudi:hover {
+  background: var(--c-surface-2);
+}
+
+.scheda__chiudi svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.scheda__foto {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: var(--c-surface-2);
+}
+
+.scheda__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Su schermo largo la foto accompagna l'altezza del testo invece di
+   lasciare un vuoto bianco sotto di sé. Deve stare dopo la regola qui
+   sopra, altrimenti `aspect-ratio: 1/1` avrebbe la meglio. */
+@media (min-width: 760px) {
+  .scheda__foto {
+    height: 100%;
+    min-height: 100%;
+    aspect-ratio: auto;
+  }
+}
+
+.scheda--venduto .scheda__foto img {
+  opacity: 0.65;
+}
+
+.scheda__testo {
+  padding: var(--s-5) var(--s-5) var(--s-6);
+}
+
+@media (min-width: 760px) {
+  .scheda__testo {
+    padding: var(--s-7) var(--s-6);
+  }
+}
+
+.scheda__categoria {
+  margin: 0;
+  color: var(--c-ink-faint);
+  font-size: var(--t-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.scheda__nome {
+  margin-top: var(--s-2);
+  font-size: var(--t-2xl);
+}
+
+.scheda__prezzo {
+  margin: var(--s-2) 0 0;
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+}
+
+.scheda__descrizione {
+  margin: var(--s-5) 0 0;
+  color: var(--c-ink-soft);
+  font-weight: 300;
+}
+
+.scheda__materiali {
+  margin-top: var(--s-5);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--c-line);
+}
+
+.scheda__sottotitolo {
+  margin: 0;
+  color: var(--c-ink-faint);
+  font-family: var(--f-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.materiali {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.materiali li {
+  padding: var(--s-1) var(--s-3);
+  background: var(--c-surface-2);
+  border-radius: var(--r-full);
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+}
+
+.scheda__azioni {
+  margin-top: var(--s-6);
+}
+
+.scheda__azioni .bottone {
+  width: 100%;
+}
+
+.scheda__nota {
+  margin: var(--s-3) 0 0;
+  color: var(--c-ink-soft);
+  font-size: var(--t-sm);
+  text-align: center;
+}
+
+/* --- Piè di pagina -------------------------------------------- */
+
+.pie {
+  margin-top: var(--s-8);
+  padding-block: var(--s-7) calc(var(--safe-bottom) + var(--s-7));
+  border-top: 1px solid var(--c-line);
+}
+
+.pie__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-4);
+  text-align: center;
+}
+
+.pie__titolo {
+  margin: 0;
+  color: var(--c-ink-faint);
+  font-family: var(--f-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.contatti {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-3) var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contatti a,
+.contatti span {
+  color: var(--c-ink);
+  font-size: var(--t-sm);
+  text-decoration-color: var(--c-accent);
+  text-underline-offset: 0.3em;
+}
+
+.contatti a {
+  transition: opacity var(--dur) var(--ease);
+}
+
+.contatti a:hover {
+  opacity: 0.7;
+}
+
+.pie__nota {
+  margin: var(--s-2) 0 0;
+  color: var(--c-ink-faint);
+  font-size: var(--t-xs);
+}

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!-- I valori qui sotto rispecchiano config.js e vengono riallineati
+         all'avvio da js/catalog.js: restano corretti anche senza JavaScript. -->
+    <title>Nome Gioielleria — Gioielli fatti a mano</title>
+    <meta name="description" content="Piccola selezione di gioielli scelti e realizzati con cura." />
+    <meta name="theme-color" content="#faf8f5" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:site_name" content="Nome Gioielleria" />
+    <meta property="og:title" content="Nome Gioielleria — Gioielli fatti a mano" />
+    <meta property="og:description" content="Piccola selezione di gioielli scelti e realizzati con cura." />
+    <meta property="og:image" content="images/products/placeholder.svg" />
+    <meta property="og:url" content="https://davide-cirillo-ntt.github.io/vetrina-gioielli/" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%239a7b4f' stroke-width='2'/%3E%3C/svg%3E"
+    />
+
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/site.css" />
+
+    <script type="module" src="js/catalog.js"></script>
+  </head>
+
+  <body>
+    <a class="salta" href="#catalogo">Vai al catalogo</a>
+
+    <header class="apertura">
+      <div class="contenitore apertura__inner">
+        <h1 class="apertura__nome" id="nome-negozio">Nome Gioielleria</h1>
+        <p class="apertura__tagline" id="tagline-negozio">Gioielli fatti a mano</p>
+        <span class="apertura__tratto" aria-hidden="true"></span>
+        <p class="apertura__testo" id="descrizione-negozio">
+          Piccola selezione di gioielli scelti e realizzati con cura.
+        </p>
+      </div>
+    </header>
+
+    <main class="contenitore" id="catalogo">
+      <h2 class="sr-only">Catalogo dei gioielli</h2>
+
+      <div class="filtri" id="filtri" role="group" aria-label="Filtra per categoria" hidden></div>
+
+      <p class="conteggio" id="conteggio" role="status" aria-live="polite">
+        Caricamento del catalogo in corso
+      </p>
+
+      <!-- I gioielli vengono inseriti da js/catalog.js. Gli scheletri qui sotto
+           si vedono già prima che il modulo venga eseguito. -->
+      <ul class="griglia" id="griglia">
+        <li class="scheletro" aria-hidden="true">
+          <span class="scheletro__foto"></span>
+          <span class="scheletro__riga"></span>
+          <span class="scheletro__riga scheletro__riga--corta"></span>
+        </li>
+        <li class="scheletro" aria-hidden="true">
+          <span class="scheletro__foto"></span>
+          <span class="scheletro__riga"></span>
+          <span class="scheletro__riga scheletro__riga--corta"></span>
+        </li>
+        <li class="scheletro" aria-hidden="true">
+          <span class="scheletro__foto"></span>
+          <span class="scheletro__riga"></span>
+          <span class="scheletro__riga scheletro__riga--corta"></span>
+        </li>
+        <li class="scheletro" aria-hidden="true">
+          <span class="scheletro__foto"></span>
+          <span class="scheletro__riga"></span>
+          <span class="scheletro__riga scheletro__riga--corta"></span>
+        </li>
+        <li class="scheletro" aria-hidden="true">
+          <span class="scheletro__foto"></span>
+          <span class="scheletro__riga"></span>
+          <span class="scheletro__riga scheletro__riga--corta"></span>
+        </li>
+        <li class="scheletro" aria-hidden="true">
+          <span class="scheletro__foto"></span>
+          <span class="scheletro__riga"></span>
+          <span class="scheletro__riga scheletro__riga--corta"></span>
+        </li>
+      </ul>
+
+      <div class="avviso" id="avviso" hidden>
+        <h3 class="avviso__titolo" id="avviso-titolo"></h3>
+        <p class="avviso__testo" id="avviso-testo"></p>
+        <button class="bottone bottone--contorno" type="button" id="avviso-riprova" hidden>
+          Riprova
+        </button>
+      </div>
+
+      <noscript>
+        <div class="avviso">
+          <h3 class="avviso__titolo">Catalogo non disponibile</h3>
+          <p class="avviso__testo">
+            Per sfogliare i gioielli occorre attivare JavaScript nel browser. In
+            alternativa ci scriva pure: le raccontiamo volentieri cosa abbiamo in negozio.
+          </p>
+        </div>
+      </noscript>
+    </main>
+
+    <footer class="pie">
+      <div class="contenitore pie__inner">
+        <h2 class="pie__titolo">Contatti</h2>
+        <ul class="contatti" id="contatti" hidden></ul>
+        <p class="pie__nota" id="copyright"></p>
+      </div>
+    </footer>
+
+    <dialog class="scheda" id="scheda" aria-labelledby="scheda-nome">
+      <article class="scheda__pannello" id="scheda-pannello" tabindex="-1">
+        <button class="scheda__chiudi" type="button" id="scheda-chiudi" aria-label="Chiudi la scheda">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M6 6l12 12M18 6L6 18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+
+        <div class="scheda__foto">
+          <img
+            id="scheda-immagine"
+            src="images/products/placeholder.svg"
+            alt=""
+            width="800"
+            height="800"
+            decoding="async"
+          />
+          <span class="etichetta etichetta--grande" id="scheda-venduto" hidden>Venduto</span>
+        </div>
+
+        <div class="scheda__testo">
+          <p class="scheda__categoria" id="scheda-categoria" hidden></p>
+          <h2 class="scheda__nome" id="scheda-nome"></h2>
+          <p class="scheda__prezzo" id="scheda-prezzo"></p>
+          <p class="scheda__descrizione" id="scheda-descrizione" hidden></p>
+
+          <div class="scheda__materiali" id="scheda-materiali" hidden>
+            <h3 class="scheda__sottotitolo">Materiali</h3>
+            <ul class="materiali" id="scheda-materiali-elenco"></ul>
+          </div>
+
+          <div class="scheda__azioni">
+            <a
+              class="bottone bottone--pieno"
+              id="scheda-whatsapp"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              hidden
+            >
+              <svg class="bottone__icona" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M12 2.6a9.4 9.4 0 0 0-8 14.3L2.8 21.2l4.4-1.2A9.4 9.4 0 1 0 12 2.6Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M9 7.8c.15-.35.3-.36.5-.37h.42c.14 0 .33-.05.5.38l.6 1.45c.07.17.03.33-.05.44l-.33.4c-.1.12-.2.26-.08.5.4.78 1.1 1.4 1.9 1.77.25.12.4.1.53-.03l.42-.5c.14-.17.3-.13.47-.07l1.36.66c.18.09.3.13.35.2.05.08.05.44-.1.85-.16.4-.77.78-1.1.81-.45.04-.9.05-2.6-.7-2.03-.93-3.3-3.03-3.4-3.17-.1-.14-.8-1.05-.8-2 0-.95.5-1.4.68-1.6Z"
+                  fill="currentColor"
+                />
+              </svg>
+              Chiedi informazioni su WhatsApp
+            </a>
+
+            <button class="bottone bottone--pieno" id="scheda-whatsapp-off" type="button" disabled hidden>
+              Chiedi informazioni su WhatsApp
+            </button>
+
+            <p class="scheda__nota" id="scheda-nota" hidden></p>
+          </div>
+        </div>
+      </article>
+    </dialog>
+  </body>
+</html>
