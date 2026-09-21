@@ -1,18 +1,47 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T13:00:00.000Z",
+  "updatedAt": "2026-09-21T17:15:43.470Z",
   "products": [
+    {
+      "id": "anello-artigianale-essenziale-0003",
+      "name": "Anello artigianale essenziale",
+      "category": "anelli",
+      "price": null,
+      "description": "Anello con montatura semplice in metallo prezioso lucido. La linea è pulita e priva di decorazioni superflue per mettere in risalto la forma geometrica lineare. Un gioiello pensato per l'uso quotidiano, comodo da indossare in ogni occasione.",
+      "materials": [
+        "metallo"
+      ],
+      "images": [
+        "images/products/anello-artigianale-essenziale-mubiaq7x.jpg"
+      ],
+      "available": true,
+      "featured": false,
+      "tags": [
+        "anello",
+        "artigianale",
+        "gioiello"
+      ],
+      "createdAt": "2026-09-21T17:15:43.470Z"
+    },
     {
       "id": "anello-aurora-0001",
       "name": "Anello Aurora",
       "category": "anelli",
       "price": 189,
       "description": "Anello in argento 925 con castone rotondo e pietra di luna. La montatura sottile lascia respirare la pietra, che cambia riflesso con la luce. Un pezzo discreto, pensato per essere indossato tutti i giorni.",
-      "materials": ["Argento 925", "Pietra di luna"],
-      "images": ["images/products/placeholder.svg"],
+      "materials": [
+        "Argento 925",
+        "Pietra di luna"
+      ],
+      "images": [
+        "images/products/placeholder.svg"
+      ],
       "available": true,
       "featured": true,
-      "tags": ["minimal", "pietra naturale"],
+      "tags": [
+        "minimal",
+        "pietra naturale"
+      ],
       "createdAt": "2026-09-21T13:00:00.000Z"
     },
     {
@@ -21,11 +50,18 @@
       "category": "collane",
       "price": 145,
       "description": "Catena veneziana in oro giallo 18kt con pendente a goccia. Lunghezza 42 cm con chiusura regolabile. Leggera al punto da dimenticarsela addosso.",
-      "materials": ["Oro giallo 18kt"],
-      "images": ["images/products/placeholder.svg"],
+      "materials": [
+        "Oro giallo 18kt"
+      ],
+      "images": [
+        "images/products/placeholder.svg"
+      ],
       "available": true,
       "featured": false,
-      "tags": ["oro", "quotidiano"],
+      "tags": [
+        "oro",
+        "quotidiano"
+      ],
       "createdAt": "2026-09-21T13:00:00.000Z"
     }
   ]
