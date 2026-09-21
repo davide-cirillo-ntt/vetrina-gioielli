@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+
+    <!-- viewport-fit=cover serve a usare tutto lo schermo sui telefoni con
+         il notch; i margini sicuri li gestisce admin.css con env(safe-area-inset-*). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>Dashboard — Nome Gioielleria</title>
+    <meta name="description" content="Aggiungi un gioiello al catalogo dal telefono." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#faf8f5" />
+
+    <!-- Aggiunta alla schermata Home -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Gioielli" />
+    <link rel="apple-touch-icon" href="icons/icona-180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icona-192.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+
+    <script type="module" src="../js/admin.js"></script>
+  </head>
+
+  <body>
+    <noscript>
+      <div class="contenitore">
+        <p class="avviso avviso--errore">
+          Per usare la dashboard serve JavaScript attivo nel browser.
+        </p>
+      </div>
+    </noscript>
+
+    <!-- Striscia di stato: compare solo quando manca la connessione. -->
+    <p class="striscia" id="striscia" role="status" aria-live="polite" hidden></p>
+
+    <!-- =========================================================
+         SCHERMATA DI ACCESSO
+         ========================================================= -->
+    <main class="accesso" id="schermata-accesso" hidden>
+      <div class="contenitore accesso__inner">
+        <p class="occhiello">Dashboard</p>
+        <h1 class="accesso__titolo">Entra nel tuo negozio</h1>
+        <span class="tratto" aria-hidden="true"></span>
+
+        <p class="accesso__testo">
+          Per pubblicare un gioiello serve un <strong>codice di accesso</strong> di
+          GitHub. Si crea una volta sola e resta salvato su questo telefono.
+        </p>
+
+        <details class="pieghevole">
+          <summary class="pieghevole__titolo">Come si crea il codice — un minuto</summary>
+          <ol class="passi">
+            <li>
+              Apri
+              <a
+                id="link-crea-codice"
+                href="https://github.com/settings/personal-access-tokens/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                >questa pagina di GitHub</a
+              >.
+            </li>
+            <li>Dai un nome qualsiasi, per esempio <em>Dashboard gioielleria</em>.</li>
+            <li>
+              Alla voce <em>Repository access</em> scegli
+              <strong>Only select repositories</strong> e seleziona soltanto
+              <code id="nome-repository">il sito</code>.
+            </li>
+            <li>
+              Alla voce <em>Permissions</em>, sotto <em>Repository permissions</em>,
+              metti <strong>Contents</strong> su <strong>Read and write</strong>.
+              Non serve altro.
+            </li>
+            <li>Premi <em>Generate token</em>, copia il codice e incollalo qui sotto.</li>
+          </ol>
+        </details>
+
+        <form class="modulo" id="modulo-accesso" novalidate>
+          <div class="campo">
+            <label class="campo__nome" for="campo-codice">Codice di accesso</label>
+            <input
+              class="controllo"
+              id="campo-codice"
+              name="codice"
+              type="password"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              placeholder="github_pat_…"
+              aria-describedby="nota-codice"
+              required
+            />
+            <p class="campo__nota" id="nota-codice">
+              Trattalo come una password: non condividerlo e non usarlo sul
+              telefono o sul computer di altri.
+            </p>
+          </div>
+
+          <p class="avviso avviso--errore" id="errore-accesso" role="alert" hidden></p>
+
+          <button class="bottone bottone--pieno bottone--largo" id="bottone-entra" type="submit">
+            Entra
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <!-- =========================================================
+         DASHBOARD
+         ========================================================= -->
+    <div id="schermata-app" hidden>
+      <header class="intestazione">
+        <div class="contenitore intestazione__inner">
+          <div class="intestazione__testi">
+            <p class="occhiello">Dashboard</p>
+            <h1 class="intestazione__nome" id="nome-negozio">Nome Gioielleria</h1>
+          </div>
+          <a class="bottone bottone--contorno bottone--piccolo" href="../" target="_blank" rel="noopener">
+            Vedi il sito
+          </a>
+        </div>
+      </header>
+
+      <nav class="schede contenitore" id="schede" aria-label="Sezioni della dashboard">
+        <button class="scheda" type="button" data-vista="aggiungi" aria-current="true">
+          Aggiungi
+        </button>
+        <button class="scheda" type="button" data-vista="catalogo">Catalogo</button>
+        <button class="scheda" type="button" data-vista="impostazioni">Impostazioni</button>
+      </nav>
+
+      <!-- ---------------------------------------------------------
+           VISTA: AGGIUNGI
+           --------------------------------------------------------- -->
+      <main class="contenitore vista" id="vista-aggiungi">
+        <!-- Passo 1: la foto -->
+        <section class="passo" aria-labelledby="titolo-foto">
+          <h2 class="passo__titolo" id="titolo-foto">
+            <span class="passo__numero">1</span> La foto
+          </h2>
+
+          <div id="scelta-foto">
+            <label class="bottone bottone--pieno bottone--foto" for="campo-fotocamera">
+              <svg class="bottone__icona" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M4 8h3l1.5-2h7L17 8h3v11H4V8Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linejoin="round"
+                />
+                <circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.4" />
+              </svg>
+              Scatta la foto
+            </label>
+            <input
+              class="sr-only"
+              id="campo-fotocamera"
+              type="file"
+              accept="image/*"
+              capture="environment"
+            />
+
+            <label class="bottone bottone--contorno bottone--largo" for="campo-galleria">
+              Scegli dalla galleria
+            </label>
+            <input class="sr-only" id="campo-galleria" type="file" accept="image/*" />
+
+            <p class="campo__nota">
+              Appoggia il gioiello su un fondo semplice, con buona luce. Al resto
+              pensa la dashboard: raddrizza, ritaglia in quadrato e alleggerisce.
+            </p>
+          </div>
+
+          <p class="lavorazione" id="lavorazione-foto" role="status" aria-live="polite" hidden>
+            <span class="rotella" aria-hidden="true"></span> Sto migliorando la foto…
+          </p>
+
+          <div id="esito-foto" hidden>
+            <div class="provino">
+              <img class="provino__img" id="foto-dopo" alt="La foto del gioiello, migliorata" />
+              <img class="provino__img provino__img--sopra" id="foto-prima" alt="" hidden />
+              <span class="etichetta" id="etichetta-provino">Dopo</span>
+            </div>
+
+            <div class="provino__azioni">
+              <button class="bottone bottone--contorno bottone--piccolo" id="bottone-confronta" type="button">
+                Vedi com'era
+              </button>
+              <button class="bottone bottone--contorno bottone--piccolo" id="bottone-cambia-foto" type="button">
+                Cambia foto
+              </button>
+            </div>
+
+            <p class="risparmio" id="risparmio"></p>
+          </div>
+
+          <p class="avviso avviso--errore" id="errore-foto" role="alert" hidden></p>
+        </section>
+
+        <!-- Passo 2: la descrizione -->
+        <section class="passo" id="passo-descrizione" aria-labelledby="titolo-descrizione" hidden>
+          <h2 class="passo__titolo" id="titolo-descrizione">
+            <span class="passo__numero">2</span> La descrizione
+          </h2>
+
+          <!-- Quando la chiave c'è -->
+          <div id="ai-attiva" hidden>
+            <p class="passo__testo">
+              Se vuoi, scrivi due indizi: aiutano a proporre un testo più preciso.
+              Puoi anche premere direttamente il pulsante.
+            </p>
+
+            <div class="campo">
+              <label class="campo__nome" for="campo-indizi">Indizi (facoltativo)</label>
+              <input
+                class="controllo"
+                id="campo-indizi"
+                type="text"
+                placeholder="es. argento con pietra di luna"
+                autocomplete="off"
+              />
+            </div>
+
+            <button class="bottone bottone--oro bottone--largo" id="bottone-proponi" type="button">
+              Proponi nome e descrizione
+            </button>
+          </div>
+
+          <!-- Quando la chiave manca -->
+          <div id="ai-spenta" hidden>
+            <p class="passo__testo">
+              La descrizione automatica non è attiva: scrivi tu il testo nel passo
+              qui sotto, oppure attivala adesso.
+            </p>
+            <button class="bottone bottone--contorno bottone--largo" id="bottone-attiva-ai" type="button">
+              Attiva la descrizione automatica
+            </button>
+
+            <!-- Si apre qui dentro, senza uscire dal flusso e senza perdere la bozza. -->
+            <div class="riquadro" id="pannello-chiave" hidden>
+              <p class="passo__testo">
+                Serve una chiave di Google Gemini. È
+                <strong>gratuita e non serve la carta di credito</strong>: si ottiene
+                in un minuto su
+                <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"
+                  >aistudio.google.com/apikey</a
+                >, premendo <em>Create API key</em>.
+              </p>
+
+              <div class="campo">
+                <label class="campo__nome" for="campo-chiave">Chiave della descrizione automatica</label>
+                <input
+                  class="controllo"
+                  id="campo-chiave"
+                  type="password"
+                  inputmode="text"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  spellcheck="false"
+                  placeholder="AIza…"
+                />
+                <p class="campo__nota">
+                  Anche questa è come una password. Resta su questo telefono.
+                </p>
+              </div>
+
+              <button class="bottone bottone--pieno bottone--largo" id="bottone-salva-chiave" type="button">
+                Salva la chiave
+              </button>
+            </div>
+          </div>
+
+          <p class="lavorazione" id="lavorazione-ai" role="status" aria-live="polite" hidden>
+            <span class="rotella" aria-hidden="true"></span> Sto guardando la foto…
+          </p>
+
+          <p class="avviso avviso--nota" id="nota-ai" role="status" hidden></p>
+        </section>
+
+        <!-- Passo 3: controlla e correggi -->
+        <section class="passo" id="passo-scheda" aria-labelledby="titolo-scheda" hidden>
+          <h2 class="passo__titolo" id="titolo-scheda">
+            <span class="passo__numero">3</span> Controlla e correggi
+          </h2>
+          <p class="passo__testo">
+            Quello che leggi è solo una proposta: cambia pure ogni parola. Decidi tu.
+          </p>
+
+          <form class="modulo" id="modulo-scheda" novalidate>
+            <div class="campo">
+              <label class="campo__nome" for="campo-nome">Nome del gioiello</label>
+              <input
+                class="controllo"
+                id="campo-nome"
+                type="text"
+                maxlength="80"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <div class="campo">
+              <div class="campo__riga">
+                <label class="campo__nome" for="campo-descrizione">Descrizione</label>
+                <button class="bottone--legame" id="bottone-riprova-ai" type="button" hidden>
+                  Riprova la proposta
+                </button>
+              </div>
+              <textarea
+                class="controllo controllo--lungo"
+                id="campo-descrizione"
+                rows="5"
+                maxlength="800"
+                required
+              ></textarea>
+              <p class="campo__nota">
+                Due o tre frasi bastano: che cos'è, com'è fatto, quando si porta.
+              </p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__nome" for="campo-categoria">Categoria</label>
+              <select class="controllo controllo--scelta" id="campo-categoria">
+                <!-- Riempita da js/admin.js leggendo CONFIG.categories -->
+              </select>
+            </div>
+
+            <div class="campo">
+              <label class="campo__nome" for="campo-materiali">Materiali</label>
+              <input
+                class="controllo"
+                id="campo-materiali"
+                type="text"
+                placeholder="Argento 925, Pietra di luna"
+                autocomplete="off"
+              />
+              <p class="campo__nota">Separali con la virgola.</p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__nome" for="campo-tag">Parole chiave</label>
+              <input
+                class="controllo"
+                id="campo-tag"
+                type="text"
+                placeholder="minimal, regalo"
+                autocomplete="off"
+              />
+              <p class="campo__nota">Servono a ritrovarlo. Separale con la virgola.</p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__nome" for="campo-prezzo">Prezzo</label>
+              <div class="prezzo">
+                <span class="prezzo__valuta" id="simbolo-valuta" aria-hidden="true">€</span>
+                <input
+                  class="controllo"
+                  id="campo-prezzo"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  step="1"
+                  placeholder="0"
+                />
+              </div>
+              <label class="interruttore">
+                <input id="campo-su-richiesta" type="checkbox" />
+                <span>Non mostrare il prezzo, scrivo "su richiesta"</span>
+              </label>
+            </div>
+
+            <div class="campo">
+              <label class="interruttore">
+                <input id="campo-disponibile" type="checkbox" checked />
+                <span>Disponibile — se lo togli, in vetrina risulta venduto</span>
+              </label>
+              <label class="interruttore">
+                <input id="campo-evidenza" type="checkbox" />
+                <span>Mettilo in evidenza</span>
+              </label>
+            </div>
+          </form>
+
+          <p class="avviso avviso--errore" id="errore-scheda" role="alert" hidden></p>
+        </section>
+
+        <!-- Passo 4: pubblicazione -->
+        <section class="passo" id="passo-pubblica" aria-labelledby="titolo-pubblica" hidden>
+          <h2 class="passo__titolo" id="titolo-pubblica">
+            <span class="passo__numero">4</span> Pubblica
+          </h2>
+
+          <div id="avanzamento" hidden>
+            <div
+              class="barra"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              id="barra"
+            >
+              <span class="barra__pieno" id="barra-pieno"></span>
+            </div>
+            <p class="passo__testo" id="avanzamento-testo" role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="riuscito" id="riuscito" hidden>
+            <h3 class="riuscito__titolo">Pubblicato</h3>
+            <p class="passo__testo" id="riuscito-testo"></p>
+            <div class="riuscito__azioni">
+              <a
+                class="bottone bottone--pieno bottone--largo"
+                id="link-gioiello"
+                href="../"
+                target="_blank"
+                rel="noopener"
+                >Vedi il gioiello</a
+              >
+              <button class="bottone bottone--contorno bottone--largo" id="bottone-altro" type="button">
+                Aggiungine un altro
+              </button>
+            </div>
+          </div>
+
+          <p class="avviso avviso--errore" id="errore-pubblica" role="alert" hidden></p>
+        </section>
+
+        <!-- Barra fissa in basso: è dove arriva il pollice. -->
+        <div class="azione" id="azione" hidden>
+          <div class="contenitore azione__inner">
+            <button class="bottone bottone--pieno bottone--largo" id="bottone-pubblica" type="button">
+              Pubblica il gioiello
+            </button>
+            <button class="bottone--legame" id="bottone-annulla" type="button">
+              Annulla e ricomincia
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- ---------------------------------------------------------
+           VISTA: CATALOGO
+           --------------------------------------------------------- -->
+      <main class="contenitore vista" id="vista-catalogo" hidden>
+        <section class="passo">
+          <h2 class="passo__titolo">Gioielli pubblicati</h2>
+          <p class="passo__testo" id="conteggio" role="status" aria-live="polite">Carico…</p>
+
+          <p class="avviso avviso--errore" id="errore-catalogo" role="alert" hidden></p>
+
+          <ul class="elenco" id="elenco"></ul>
+
+          <button class="bottone bottone--contorno bottone--largo" id="bottone-ricarica" type="button">
+            Ricarica l'elenco
+          </button>
+        </section>
+      </main>
+
+      <!-- ---------------------------------------------------------
+           VISTA: IMPOSTAZIONI
+           --------------------------------------------------------- -->
+      <main class="contenitore vista" id="vista-impostazioni" hidden>
+        <section class="passo">
+          <h2 class="passo__titolo">Pubblicazione</h2>
+          <p class="stato" id="stato-github"></p>
+          <p class="passo__testo">
+            È il codice che permette di scrivere sul sito. Senza, non si pubblica.
+          </p>
+        </section>
+
+        <section class="passo">
+          <h2 class="passo__titolo">Descrizione automatica</h2>
+          <p class="stato" id="stato-gemini"></p>
+          <p class="passo__testo">
+            Serve solo a proporre nome e descrizione guardando la foto. È
+            facoltativa: senza, la dashboard funziona lo stesso e i testi li
+            scrivi tu. La chiave è
+            <strong>gratuita e non richiede la carta di credito</strong>:
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"
+              >aistudio.google.com/apikey</a
+            >.
+          </p>
+
+          <div class="campo">
+            <label class="campo__nome" for="campo-chiave-impostazioni">Chiave</label>
+            <input
+              class="controllo"
+              id="campo-chiave-impostazioni"
+              type="password"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              placeholder="AIza…"
+            />
+          </div>
+
+          <div class="coppia">
+            <button class="bottone bottone--pieno" id="bottone-salva-chiave-2" type="button">
+              Salva
+            </button>
+            <button class="bottone bottone--contorno" id="bottone-togli-chiave" type="button">
+              Togli la chiave
+            </button>
+          </div>
+          <p class="campo__nota" id="nota-chiave-salvata" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="passo">
+          <h2 class="passo__titolo">Sicurezza</h2>
+          <p class="passo__testo">
+            Il codice di accesso e la chiave sono come password: restano su questo
+            telefono e non vanno usati su dispositivi condivisi. Se presti il
+            telefono, o se hai finito, premi <strong>Esci</strong>.
+          </p>
+          <button class="bottone bottone--rischio bottone--largo" id="bottone-esci" type="button">
+            Esci e cancella le credenziali
+          </button>
+        </section>
+      </main>
+    </div>
+
+    <!-- Conferma di eliminazione: nomina il gioiello, così non si sbaglia. -->
+    <dialog class="finestra" id="finestra-elimina" aria-labelledby="titolo-elimina">
+      <h2 class="finestra__titolo" id="titolo-elimina">Elimino questo gioiello?</h2>
+      <p class="passo__testo">
+        <strong id="nome-da-eliminare"></strong> sparirà dal sito insieme alla sua
+        foto. Non si può annullare.
+      </p>
+      <p class="avviso avviso--errore" id="errore-elimina" role="alert" hidden></p>
+      <div class="finestra__azioni">
+        <button class="bottone bottone--contorno bottone--largo" id="bottone-non-eliminare" type="button">
+          No, lascia stare
+        </button>
+        <button class="bottone bottone--rischio bottone--largo" id="bottone-elimina" type="button">
+          Sì, elimina
+        </button>
+      </div>
+    </dialog>
+  </body>
+</html>
