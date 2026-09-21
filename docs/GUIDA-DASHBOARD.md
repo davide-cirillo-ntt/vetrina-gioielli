@@ -1,5 +1,10 @@
 # Guida alla dashboard
 
+> **Nota.** Questo è un progetto dimostrativo, realizzato per sperimentare lo
+> sviluppo assistito dall'intelligenza artificiale. Non esiste un negozio
+> reale e i gioielli pubblicati non sono in vendita. La guida è scritta come
+> se il negozio esistesse, perché anche questo fa parte della prova.
+
 Questa è la guida per chi gestisce il negozio. Non serve saper programmare:
 si scatta una foto, si controllano due righe di testo e si pubblica.
 

@@ -1,6 +1,10 @@
 // =============================================================
 //  CONFIGURAZIONE DEL NEGOZIO — modifica solo questo file
 // =============================================================
+// NOTA: questo è un progetto dimostrativo, nato per sperimentare lo sviluppo
+// assistito dall'intelligenza artificiale. Non esiste un negozio reale: i dati
+// qui sotto sono segnaposto e i gioielli pubblicati non sono in vendita.
+//
 // Dopo ogni modifica salva e fai commit: il sito si aggiorna da solo.
 
 export const CONFIG = {
