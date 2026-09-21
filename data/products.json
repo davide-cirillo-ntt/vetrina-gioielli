@@ -1,7 +1,28 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T17:15:43.470Z",
+  "updatedAt": "2026-09-21T17:19:12.874Z",
   "products": [
+    {
+      "id": "anello-bottiglia-0004",
+      "name": "Anello Bottiglia",
+      "category": "anelli",
+      "price": null,
+      "description": "Questo anello ha una forma essenziale e un profilo pulito. La lavorazione artigianale evidenzia la struttura metallica del gioiello. Si indossa comodamente al dito per completare un abbigliamento quotidiano.",
+      "materials": [
+        "metallo"
+      ],
+      "images": [
+        "images/products/anello-bottiglia-mubif80j.jpg"
+      ],
+      "available": true,
+      "featured": false,
+      "tags": [
+        "anello",
+        "metallo",
+        "gioiello"
+      ],
+      "createdAt": "2026-09-21T17:19:12.874Z"
+    },
     {
       "id": "anello-artigianale-essenziale-0003",
       "name": "Anello artigianale essenziale",
